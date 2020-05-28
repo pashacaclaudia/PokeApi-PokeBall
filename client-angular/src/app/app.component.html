@@ -1,0 +1,31 @@
+<form>
+  <div class="form-group">
+    <input type="pokemon" class="form-control" id="pokemon" placeholder="Inserisci pokemon" #HTMLpokemon>
+  </div>
+  <button type="submit" class="btn btn-primary w-25" (click)="cercaPokemon(HTMLpokemon)">Invia</button>
+</form>
+
+<br>
+
+ <div *ngIf="data" >
+    <h3>{{data.forms[0].name }}</h3>
+    <p>{{data.forms[0].url }}</p>
+
+<form>
+  <h3 class="d-none">Add a Pokemon</h3>
+  <div class="d-none">
+    <label for="Nome">Pokemon:</label>
+    <input name="Nome" [value]="data.forms[0].name" #newNome>
+  </div>
+  <div class="d-none">
+    <label for="url">Url:</label>
+    <input name="url" [value]="data.forms[0].url" #newUrl>
+  </div>
+  <button class="btn btn-secondary w-25" (click)="catturaPokemon(newNome, newUrl)">
+    Cattura pokemon
+  </button>
+</form>
+
+</div>
+
+<router-outlet></router-outlet>

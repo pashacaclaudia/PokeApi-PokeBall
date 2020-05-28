@@ -3,12 +3,10 @@ var router = express.Router();
 const sql = require('mssql');
 var createError = require('http-errors');
 
-
 const config = {
   user: 'pashaca.claudia',  //Vostro user name
   password: 'xxx123#', //Vostra password
   server: "213.140.22.237",  //Stringa di connessione
-  database: 'pashaca.claudia', //(Nome del DB)
 }
 
 //Function to connect to database and execute query
@@ -27,44 +25,27 @@ let executeQuery = function (res, query, next) {
         sql.close();
         return;
       }
-      res.send(result); //Il vettore con i dati è nel campo recordset (puoi loggare result per verificare)
+      res.send(result.recordset); //Il vettore con i dati è nel campo recordset (puoi loggare result per verificare)
       sql.close();
     });
 
   });
 }
 
-/* GET users listing. */
-router.get('/', function (req, res, next) {
-  
-});
-
-/*router.get('/search/:name', function (req, res, next) {
-  let sqlQuery = `select * from dbo.[cr-unit-attributes] where Unit = '${req.params.name}'`;
+router.get('/api/pokemon', function (req, res, next) {
+  let sqlQuery = "select * from PokeBall.Pokemon";
   executeQuery(res, sqlQuery, next);
-  
-});*/
-router.get('/inserisci', function(req, res, next) {
-    res.render('inserisci');
 });
 
-
-router.post('/', function (req, res, next) {
-  let unit = req.body;
-  if (!unit) {
-    next(createError(400 , "Please provide a correct unit"));
+router.post('/api/catchpok', function (req, res, next) {
+  let pokemon = req.body;
+  if (!pokemon) {
+    next(createError(400 , "Please provide a correct pokemon"));
   }
   sql.connect(config, err => {
-    let sqlRequest = new sql.Request();
-    let sqlInsert = `INSERT INTO PokeBall.Pokemon (Nome, indirizzo) VALUES ('${unit.Nome}','${unit.indirizzo}')`;
-    sqlRequest.query(sqlInsert, (error, results) => {
-        if (error) throw error;
-        sqlRequest.query(`SELECT * FROM PokeBall.Pokemon WHERE Unit = '${unit.Nome}'`, (err, result) => {
-            if (err) console.log(err);
-            res.send(result);
-        });
-    });
+    let sqlInsert = `INSERT INTO PokeBall.Pokemon (Nome, indirizzo) VALUES ('${pokemon.Nome}','${pokemon.Indirizzo}')`;
+    executeQuery(res, sqlInsert, next);
+    res.send({success:true, message: "pokemon inserito con successo", pokemon: pokemon})
   })
 });
-
 module.exports = router;
